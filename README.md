@@ -46,16 +46,19 @@ El sistema utiliza un **display OLED** para mostrar información en tiempo real 
 | `PA0`   | Botón      | Detección de apertura manual |
 | `PA5`   | LED        | Indicador de estado |
 | `PC11`  | Timbre     | Activación del timbre |
-| `USART2` | UART       | Comunicación serie con la PC |
+| `USART2` | UART       | Comunicación Asincrona con la PC |
+| `USART3` | UART       | Comunicación Asincrona con Internet |
 | `I2C1`  | I2C        | Comunicación con el OLED |
 
-### **2️⃣ Configuración en STM32CubeMX**
+### **2️⃣ Configuración**
 - **GPIO:**
-  - `PA0`: `External Interrupt Mode with Falling edge trigger detection`
-  - `PC11`: `Output Mode` (para timbre)
-  - `PA5`: `Output Mode` (para LED indicador)
+  - `External Interrupt Mode with Falling edge trigger detection`
+  - `Output Mode` (para timbre)
+  - `Output Mode` (para LED indicador)
+  - `Control por Teclado`(External Interrup)
 - **UART:**
   - `USART2` habilitado para comunicación con la PC.
+  - `USART3` habilitado para comunicación con el Internet.
 - **I2C:**
   - `I2C1` configurado para el **OLED SSD1306**.
 
@@ -71,6 +74,5 @@ El código principal realiza las siguientes tareas:
    - **Timbre en PC11**: Enciende una señal visual/auditiva.
 5. **Sistema de seguridad**:
    - Se bloquea después de **tres intentos fallidos**.
-   - Se apaga automáticamente tras **1 minuto de inactividad**.
 
 
