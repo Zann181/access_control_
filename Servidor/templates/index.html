@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Control de Acceso</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #1e1e1e;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 255, 255, 0.2);
+            text-align: center;
+        }
+        input, button {
+            width: 100%;
+            margin-top: 10px;
+        }
+        .responses-section {
+            max-height: 250px;
+            overflow-y: auto;
+            border: 1px solid #333;
+            padding: 10px;
+            border-radius: 5px;
+            background: #2a2a2a;
+        }
+        .list-group-item {
+            background: #333;
+            color: #0ff;
+            border: none;
+        }
+        .list-group-item:nth-child(odd) {
+            background: #292929;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Control de Acceso</h2>
+        <p id="status" class="mb-3">
+            {% if conectado %} 🟢 Conectado {% else %} 🔴 No Conectado {% endif %}
+        </p>
+        <input type="text" id="comando" class="form-control" placeholder="Escribe un comando..." required>
+        <button onclick="enviarComando()" class="btn btn-primary">Enviar</button>
+        <div class="responses-section mt-3">
+            <h5>Respuestas</h5>
+            <ul class="list-group" id="respuestas-list"></ul>
+        </div>
+    </div>
+
+    <script>
+        async function enviarComando() {
+            const comando = document.getElementById("comando").value;
+            if (comando.trim() === "") return;
+
+            const response = await fetch("/send_comando", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ comando }),
+            });
+
+            if (response.ok) document.getElementById("comando").value = "";
+        }
+
+        async function fetchRespuestas() {
+            const response = await fetch("/get_respuestas");
+            const data = await response.json();
+            const respuestasList = document.getElementById("respuestas-list");
+
+            respuestasList.innerHTML = "";
+            data.respuestas.forEach(respuesta => {
+                const li = document.createElement("li");
+                li.className = "list-group-item";
+                li.textContent = respuesta;
+                respuestasList.appendChild(li);
+            });
+        }
+
+        setInterval(fetchRespuestas, 2000);
+    </script>
+</body>
+</html>
